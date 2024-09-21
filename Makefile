@@ -22,7 +22,7 @@ $(BUILD)/$(C_LIB): $(C_SRC)/linked_list.c $(C_SRC)/linked_list.h
 	$(CC) $(CFLAGS) -dynamiclib -o $@ $(C_SRC)/linked_list.c
 
 $(BUILD)/$(RUST_LIB): $(RUST_SRC)/src/lib.rs
-	cd $(RUST_SRC) && LIBRARY_PATH=$(BUILD) $(CARGO) build --release
+	cd $(RUST_SRC) && DYLD_LIBRARY_PATH=../$(BUILD) $(CARGO) build --release
 	cp $(RUST_SRC)/target/release/$(RUST_LIB) $(BUILD)/
 
 $(BUILD)/$(TEST_EXEC): $(C_SRC)/test_linked_list.c $(BUILD)/$(C_LIB) $(BUILD)/$(RUST_LIB)
@@ -34,7 +34,7 @@ c_test: $(BUILD)/$(TEST_EXEC)
 	DYLD_LIBRARY_PATH=$(BUILD) ./$(BUILD)/$(TEST_EXEC)
 
 rust_test:
-	cd $(RUST_SRC) && LIBRARY_PATH=$(BUILD) $(CARGO) test
+	cd $(RUST_SRC) && DYLD_LIBRARY_PATH=../$(BUILD) $(CARGO) test
 
 clean:
 	rm -rf $(BUILD)
